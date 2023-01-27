@@ -25,17 +25,13 @@ io.on("connection", (socket) => {
 	socket.on("disconnect", () => {
 		socket.broadcast.emit("callEnded")
         activeUsers = activeUsers.filter((user)=> user.socketId !== socket.id);
-        console.log("User disconnected", activeUsers)
         io.emit('get-users', activeUsers)
 	})
 
 	socket.on("callUser", (data) => {
-        console.log("INgitt vannu")
         const receiverId = data.userToCall;
-        console.log(receiverId)
         const user = activeUsers.find((user) => user.userId === receiverId)
         if(user){
-            console.log("und")
             io.to(user.socketId).emit("callUser", { signal: data.signalData, from: data.from, name: data.name })
         }
 	})
@@ -47,11 +43,8 @@ io.on("connection", (socket) => {
     //Send message
     socket.on("send-message", (data) => {
         const {receiverId} = data;
-        console.log("heyda",data)
         const user = activeUsers.find((user) => user.userId === receiverId)
-        console.log("chuk chuk",activeUsers)
         if(user){
-            console.log("1first")
             io.to(user.socketId).emit("receive-message",data)
         }
     })
@@ -59,10 +52,8 @@ io.on("connection", (socket) => {
     //Send voice message
     socket.on("send-voice-message", (data) => {
         const {receiverId} = data;
-        console.log("first voice data kittmuo",receiverId)
         const user = activeUsers.find((user) => user.userId === receiverId)
         if(user){
-            console.log("voice aan mone")
             io.to(user.socketId).emit("receive-voice-message",data)
         }
     });
