@@ -1,6 +1,6 @@
-const io = require('socket.io')(process.env.PORT,{
+const io = require('socket.io')(7000,{
     cors :{
-        origin: process.env.REACT_APP_URL
+        origin: "https://social-club.onrender.com/"
     }
 })
 
