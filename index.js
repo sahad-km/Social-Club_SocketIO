@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== "production") {
+    require('dotenv').config();
+}
+
 const io = require('socket.io')(process.env.PORT,{
     cors :{
         origin: process.env.REACT_APP_URL
@@ -23,7 +27,7 @@ io.on("connection", (socket) => {
 	socket.emit("me", socket.id)
 
 	socket.on("disconnect", () => {
-		socket.broadcast.emit("callEnded")
+		// socket.broadcast.emit("callEnded")
         activeUsers = activeUsers.filter((user)=> user.socketId !== socket.id);
         io.emit('get-users', activeUsers)
 	})
@@ -49,13 +53,13 @@ io.on("connection", (socket) => {
         }
     })
 
-    //Send voice message
-    socket.on("send-voice-message", (data) => {
-        const {receiverId} = data;
+    //Disconnet both clients from call
+    socket.on("end-call", (data) => {
+        const receiverId = data;
         const user = activeUsers.find((user) => user.userId === receiverId)
         if(user){
-            io.to(user.socketId).emit("receive-voice-message",data)
+            io.to(user.socketId).emit("call-ended")
         }
-    });
+    })
 })
 
